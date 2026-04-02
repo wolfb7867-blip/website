@@ -127,7 +127,23 @@ body.dark{
 background:#121212;
 color:#f5f5f5;
 }
+/* ===== DARK CART FIX ===== */
 
+body.dark .cart{
+background:#1e1e1e;
+color:white;
+}
+
+body.dark .cart input,
+body.dark .cart select{
+background:#2a2a2a;
+color:white;
+border:1px solid #444;
+}
+
+body.dark .cart-item button{
+background:#c62828;
+}
 body.dark nav,
 body.dark footer{
 background:#000;
@@ -401,6 +417,12 @@ text-decoration:none;
 font-weight:600;
 }
 
+@media(max-width:768px){
+.watermark{
+font-size:30px;
+}
+}
+
 /* DARK THEME SUPPORT */
 
 body.dark .info-container,
@@ -409,9 +431,123 @@ body.dark .contact-box{
 background:#1e1e1e;
 color:white;
 }
+/* ===== ПРОСТОЙ СЛАЙДЕР О НАС ===== */
+
+.about-slider{
+    max-width:800px;
+    margin:40px auto;
+    position:relative;
+}
+
+
+
+.about-slide{
+    width:100%;
+    height:450px;
+    object-fit:cover;
+    border-radius:25px;
+    box-shadow:0 20px 40px rgba(0,0,0,0.2);
+    display:none;
+}
+
+/* ===== ОТЗЫВЫ ===== */
+
+#reviews {
+  text-align: left;        /* выравнивание текста по центру */
+  display: flex;             /* используем flex для центрации содержимого */
+  flex-direction: column;    /* вертикальное расположение элементов */
+  align-items: center;       /* центрируем все дочерние элементы по горизонтали */
+  justify-content: center;   /* по вертикали при необходимости */
+  padding: 20px 0;           /* отступы сверху и снизу */
+}
+#reviews .section-title {
+    position: relative;  /* позволяет двигать элемент относительно его нормального положения */
+    
+    text-align: center;  /* сохраняем центрированный текст внутри блока */
+}
+
+.reviews-container{
+max-width:2400px;
+margin:0 auto;
+display:grid;
+grid-template-columns:repeat(4,1fr); /* 4 карточки */
+gap:60px;
+padding:0 40px;
+}
+
+.review-card{
+background:white;
+padding:80px;
+border-radius:20px;
+box-shadow:0 10px 25px rgba(0,0,0,0.1);
+transition:0.4s;
+text-align:left;
+}
+
+.review-card:hover{
+transform:translateY(-10px);
+box-shadow:0 20px 40px rgba(0,0,0,0.2);
+}
+
+.review-card img{
+width:100px;
+height:100px;
+border-radius:50%;
+object-fit:cover;
+margin-bottom:10px;
+}
+
+.review-card h4{
+margin-bottom:10px;
+color:#2e7d32;
+
+}
+
+.stars{
+color:#ffb400;
+font-size:18px;
+margin-bottom:10px;
+}
+
+/* ===== ПЛАНШЕТ ===== */
+
+@media(max-width:900px){
+.reviews-container{
+grid-template-columns:repeat(2,1fr); /* 2 карточки */
+}
+}
+
+/* ===== ТЕЛЕФОН ===== */
+
+@media(max-width:500px){
+.reviews-container{
+grid-template-columns:1fr; /* 1 карточка */
+}
+}
+
+
+
+/* DARK MODE */
+
+body.dark .review-card{
+background:#1e1e1e;
+color:white;
+}
+
+.about-slide.active{
+    display:block;
+}
+
+@media(max-width:768px){
+    .about-slide{
+        height:250px;
+    }
+}
+
 </style>
 </head>
 <body>
+
 
 <nav>
 <a href="#about">О нас</a>
@@ -440,7 +576,6 @@ color:white;
 <section id="products">
 
 <h2 class="section-title">Наша продукция</h2>
-<button onclick="filterCategory('all')" class="order-btn">Все</button>
 <div class="products">
 
 <div class="product-card" data-category="vegetables">
@@ -558,6 +693,7 @@ color:white;
 <button class="order-btn" onclick="addToCart('Мёд',950,'q10',this)">Заказать</button>
 </div>
 </div>
+
 <!-- Индейка -->
 <div class="product-card" data-category="meat">
 <img src="https://t4.ftcdn.net/jpg/02/70/44/39/360_F_270443960_yYGaUYX3RaEgeIfGT7D8eMNG8Ssz8F0w.jpg">
@@ -672,9 +808,9 @@ color:white;
 <div class="product-content">
 <h3>Помидоры</h3>
 <div class="price">200 ₽ / кг</div>
-<input type="number" min="1" value="1" class="qty" id="q19">
+<input type="number" min="1" value="1" class="qty" id="q21">
 <br>
-<button class="order-btn" onclick="addToCart('Капуста',70,'q19',this)">Заказать</button>
+<button class="order-btn" onclick="addToCart('Помидоры',200,'q21',this)">Заказать</button>
 </div>
 </div>
 </div>
@@ -686,22 +822,11 @@ color:white;
 <section>
 <h2 class="section-title reveal">Наша ферма</h2>
 
-<div class="slider reveal">
-
-<div class="slides">
-
-<img src="https://images.pexels.com/photos/2132250/pexels-photo-2132250.jpeg" loading="lazy">
-<img src="https://images.pexels.com/photos/422218/pexels-photo-422218.jpeg" loading="lazy">
-<img src="https://images.pexels.com/photos/248337/pexels-photo-248337.jpeg" loading="lazy">
-<img src="https://avatars.mds.yandex.net/i?id=2d3bad97aecd21c7a74618e4e4eea2ad_l-6946731-images-thumbs&n=13" loading="lazy">
-<img src="https://www.agrarheute.com/sites/agrarheute.com/files/styles/ah_bildergalerie_standalone_5x4/public/2025-03/rinder-stall-48389483.jpg?itok=XRYCMmZj" loading="lazy">
-
+<div class="about-slider">
+    <img src="img/farm3.jpg" class="about-slide active">
+    <img src="img/farm2.jpg" class="about-slide">
+    <img src="img/farm1.jpg" class="about-slide">
 </div>
-
-<button class="prev">&#10094;</button>
-<button class="next">&#10095;</button>
-
-<div class="dots"></div>
 
 </div>
 </section>
@@ -751,10 +876,74 @@ color:white;
 <p>Мы работаем с любовью и заботой о каждом клиенте.</p>
 </div>
 
-<div class="adv-box">
-<h3>⭐ Постоянные клиенты</h3>
-<p>Нас рекомендуют друзьям и возвращаются снова.</p>
+<section id="reviews">
+
+<h2 class="section-title">Отзывы наших клиентов</h2>
+
+<div class="reviews-container">
+
+<div class="review-card">
+<img src="https://randomuser.me/api/portraits/men/32.jpg">
+<h4>Али</h4>
+<div class="stars">★★★★★</div>
+<p>Очень вкусная и свежая продукция. Покупаем мясо и молоко каждую неделю.</p>
 </div>
+
+<div class="review-card">
+<img src="https://randomuser.me/api/portraits/men/45.jpg">
+<h4>Магомед</h4>
+<div class="stars">★★★★★</div>
+<p>Сыр и сметана просто отличные. Настоящие фермерские продукты.</p>
+</div>
+
+<div class="review-card">
+<img src="https://randomuser.me/api/portraits/women/44.jpg">
+<h4>Фатима</h4>
+<div class="stars">★★★★★</div>
+<p>Всегда свежие овощи. Доставка быстрая и удобная.</p>
+</div>
+
+<div class="review-card">
+<img src="https://randomuser.me/api/portraits/men/67.jpg">
+<h4>Ахмед</h4>
+<div class="stars">★★★★★</div>
+<p>Очень нравится домашняя курица и яйца. Спасибо за качество.</p>
+</div>
+
+<div class="review-card">
+<img src="https://randomuser.me/api/portraits/men/12.jpg">
+<h4>Саид</h4>
+<div class="stars">★★★★★</div>
+<p>Заказываю уже несколько месяцев. Всегда всё свежее.</p>
+</div>
+
+<div class="review-card">
+<img src="https://randomuser.me/api/portraits/women/68.jpg">
+<h4>Зайнаб</h4>
+<div class="stars">★★★★★</div>
+<p>Мёд просто невероятный. Натуральный вкус!</p>
+</div>
+
+<div class="review-card">
+<img src="https://randomuser.me/api/portraits/men/77.jpg">
+<h4>Мухаммад</h4>
+<div class="stars">★★★★★</div>
+<p>Очень доволен мясом и молочной продукцией.</p>
+</div>
+
+<div class="review-card">
+<img src="https://randomuser.me/api/portraits/men/29.jpg">
+<h4>Ислам</h4>
+<div class="stars">★★★★★</div>
+<p>Лучшие фермерские продукты в нашем районе.</p>
+</div>
+
+</div>
+
+</section>
+
+</div>
+</section>
 
 </div>
 </section>
@@ -766,7 +955,7 @@ color:white;
 
 <div class="contact-box">
 <p><strong>Фермерское хозяйство "Зелёные поля"</strong></p>
-<p>📍 Краснодарский край</p>
+<p>📍 Республика Дагестан</p>
 <p>📞 Телефон: <a href="tel:89285821703">8 (928) 582-17-03</a></p>
 <p>📧 Email: <a href="mailto:wolfb7867@gmail.com">wolfb7867@gmail.com</a></p>
 <p>🕒 Работаем ежедневно с 8:00 до 20:00</p>
@@ -795,12 +984,15 @@ allowfullscreen>
 <br><br>
 <div id="cart-items"></div>
 <p><strong>Итого: <span id="total">0</span> ₽</strong></p>
+
 <form onsubmit="checkout(event)">
-<input type="text" placeholder="Имя" required><br><br>
-<input type="tel" placeholder="Телефон" required><br><br>
-<input type="text" placeholder="Адрес" required><br><br>
+<input type="text" id="name" placeholder="Имя" required><br><br>
+<input type="tel" id="phone" placeholder="Телефон" required><br><br>
+<input type="email" id="email" placeholder="Email" required><br><br>
+<input type="text" id="address" placeholder="Адрес" required><br><br>
 <button class="order-btn">Оформить заказ</button>
 </form>
+
 </div>
 
 <div class="success" id="success">
@@ -880,6 +1072,7 @@ updateCart();
 }
 
 function updateCart(){
+    document.getElementById("delivery").addEventListener("change", updateCart);
 let items = document.getElementById("cart-items");
 let total = 0;
 let count = 0;
@@ -897,6 +1090,18 @@ ${item.name} x${item.qty} — ${sum} ₽
 <button onclick="removeItem(${i})">X</button>
 </div>`;
 });
+
+/* ===== ДОБАВЛЯЕМ ДОСТАВКУ ===== */
+
+let delivery = document.getElementById("delivery").value;
+let deliveryPrice = 0;
+
+if(delivery.includes("300")) deliveryPrice = 300;
+if(delivery.includes("600")) deliveryPrice = 600;
+
+total += deliveryPrice;
+
+/* ============================== */
 
 document.getElementById("total").innerText = total;
 document.getElementById("count").innerText = count;
@@ -917,16 +1122,18 @@ document.getElementById("overlay").classList.toggle("active");
 /*      ОФОРМЛЕНИЕ ЗАКАЗА    */
 /* ========================= */
 
-function checkout(e){
+async function checkout(e){
 e.preventDefault();
+
 if(cart.length === 0){
 showModal("Корзина пуста");
 return;
 }
 
-let name = e.target.querySelector("input[type=text]").value;
-let phone = e.target.querySelector("input[type=tel]").value;
-let address = e.target.querySelectorAll("input[type=text]")[1].value;
+let name = document.getElementById("name").value;
+let phone = document.getElementById("phone").value;
+let email = document.getElementById("email").value;
+let address = document.getElementById("address").value;
 let delivery = document.getElementById("delivery").value;
 
 let deliveryPrice = 0;
@@ -935,26 +1142,44 @@ if(delivery.includes("600")) deliveryPrice = 600;
 
 let total = cart.reduce((sum,item)=>sum+item.price*item.qty,0) + deliveryPrice;
 
-let order = {
-id: Date.now(),
-customer: name,
+let orderData = {
+name,
 phone,
+email,
 address,
 delivery,
-items: cart,
+cart,
 total
 };
 
-orders.push(order);
-localStorage.setItem("orders", JSON.stringify(orders));
+try{
+let response = await fetch("send_order.php",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify(orderData)
+});
 
-cart=[];
-saveCart();
-updateCart();
-updateOrdersCount();
-toggleCart();
+let result = await response.text();
 
-showModal("Заказ оформлен! Сумма: " + total + " ₽");
+if(result === "success"){
+
+/* ===== СБРОС КОРЗИНЫ ===== */
+
+cart = [];                         // очищаем массив
+localStorage.removeItem("cart");   // очищаем localStorage
+updateCart();                      // обновляем интерфейс
+document.querySelector("form").reset(); // очищаем форму
+toggleCart();                      // закрываем корзину
+
+showModal("Заказ отправлен! Проверьте почту 📧");
+
+}else{
+alert("Ошибка отправки");
+}
+
+}catch(err){
+alert("Ошибка сервера");
+}
 }
 
 /* ========================= */
@@ -1063,13 +1288,13 @@ document.querySelector(".products").innerHTML += `
 
 function toggleTheme(){
 document.body.classList.toggle("dark");
-localStorage.setItem("theme",
-document.body.classList.contains("dark") ? "dark" : "light");
+
+let isDark = document.body.classList.contains("dark");
+
+localStorage.setItem("theme", isDark ? "dark" : "light");
+
 }
 
-if(localStorage.getItem("theme")==="dark"){
-document.body.classList.add("dark");
-}
 /* ========================= */
 /*      SCROLL ANIMATION     */
 /* ========================= */
@@ -1151,6 +1376,19 @@ document.querySelector(".slider").addEventListener("mouseleave", startAuto);
 startAuto();
 updateSlider();
 
+/* ===== ПРОСТОЙ АВТО СЛАЙДЕР О НАС ===== */
+
+let aboutSlides = document.querySelectorAll(".about-slide");
+let aboutIndex = 0;
+
+function showAboutSlide(){
+    aboutSlides.forEach(slide => slide.classList.remove("active"));
+    aboutSlides[aboutIndex].classList.add("active");
+    aboutIndex = (aboutIndex + 1) % aboutSlides.length;
+}
+
+setInterval(showAboutSlide, 2000);
+
 /* Swipe поддержка */
 let startX = 0;
 
@@ -1207,4 +1445,5 @@ if(endX - startX > 50) prevSlide();
 
 </div>
 </body>
+
 </html>
