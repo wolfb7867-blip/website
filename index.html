@@ -976,7 +976,7 @@ allowfullscreen>
 <h2>Корзина</h2>
 <h4>Способ доставки:</h4>
 
-<select id="delivery" style="width:100%; padding:8px; border-radius:10px;">
+<select id="delivery" name="delivery" onchange="updateCart()" style="width:100%; padding:8px; border-radius:10px;">
     <option value="Самовывоз">Самовывоз</option>
     <option value="Курьер 300 ₽">Курьер 300 ₽</option>
     <option value="Экспресс 600 ₽">Экспресс 600 ₽</option>
@@ -985,12 +985,15 @@ allowfullscreen>
 <div id="cart-items"></div>
 <p><strong>Итого: <span id="total">0</span> ₽</strong></p>
 
-<form onsubmit="checkout(event)">
-<input type="text" id="name" placeholder="Имя" required><br><br>
-<input type="tel" id="phone" placeholder="Телефон" required><br><br>
-<input type="email" id="email" placeholder="Email" required><br><br>
-<input type="text" id="address" placeholder="Адрес" required><br><br>
-<button class="order-btn">Оформить заказ</button>
+<form id="orderForm" onsubmit="checkout(event)">
+<input type="hidden" name="_gotcha" value="">
+<input type="hidden" id="orderSummary" name="order" value="">
+<input type="hidden" id="totalField" name="total" value="">
+<input type="text" id="name" name="name" placeholder="Имя" required><br><br>
+<input type="tel" id="phone" name="phone" placeholder="Телефон" required><br><br>
+<input type="email" id="email" name="email" placeholder="Email" required><br><br>
+<input type="text" id="address" name="address" placeholder="Адрес" required><br><br>
+<button type="submit" class="order-btn">Оформить заказ</button>
 </form>
 
 </div>
@@ -1072,7 +1075,6 @@ updateCart();
 }
 
 function updateCart(){
-    document.getElementById("delivery").addEventListener("change", updateCart);
 let items = document.getElementById("cart-items");
 let total = 0;
 let count = 0;
@@ -1130,10 +1132,10 @@ showModal("Корзина пуста");
 return;
 }
 
-let name = document.getElementById("name").value;
-let phone = document.getElementById("phone").value;
-let email = document.getElementById("email").value;
-let address = document.getElementById("address").value;
+let name = document.getElementById("name").value.trim();
+let phone = document.getElementById("phone").value.trim();
+let email = document.getElementById("email").value.trim();
+let address = document.getElementById("address").value.trim();
 let delivery = document.getElementById("delivery").value;
 
 let deliveryPrice = 0;
@@ -1141,44 +1143,61 @@ if(delivery.includes("300")) deliveryPrice = 300;
 if(delivery.includes("600")) deliveryPrice = 600;
 
 let total = cart.reduce((sum,item)=>sum+item.price*item.qty,0) + deliveryPrice;
+let orderText = cart.map(item => `${item.name} x${item.qty} — ${item.price * item.qty} ₽`).join("\n");
 
-let orderData = {
-name,
-phone,
-email,
-address,
-delivery,
-cart,
-total
-};
+document.getElementById("orderSummary").value = orderText;
+document.getElementById("totalField").value = total + " ₽";
+
+let form = document.getElementById("orderForm");
+let submitBtn = form.querySelector('button[type="submit"]');
+let originalBtnText = submitBtn.textContent;
+submitBtn.disabled = true;
+submitBtn.textContent = "Отправка...";
 
 try{
-let response = await fetch("send_order.php",{
+let formData = new FormData(form);
+formData.set("name", name);
+formData.set("phone", phone);
+formData.set("email", email);
+formData.set("address", address);
+formData.set("delivery", delivery);
+formData.set("order", orderText);
+formData.set("total", total + " ₽");
+
+let response = await fetch("https://formspree.io/f/xeeldaow",{
 method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify(orderData)
+body:formData,
+headers:{"Accept":"application/json"}
 });
 
-let result = await response.text();
+let result = null;
+try{
+result = await response.json();
+}catch(_){}
 
-if(result === "success"){
-
-/* ===== СБРОС КОРЗИНЫ ===== */
-
-cart = [];                         // очищаем массив
-localStorage.removeItem("cart");   // очищаем localStorage
-updateCart();                      // обновляем интерфейс
-document.querySelector("form").reset(); // очищаем форму
-toggleCart();                      // закрываем корзину
-
-showModal("Заказ отправлен! Проверьте почту 📧");
-
+if(response.ok){
+cart = [];
+localStorage.removeItem("cart");
+updateCart();
+form.reset();
+document.getElementById("delivery").value = "Самовывоз";
+updateCart();
+toggleCart();
+showModal("Заказ отправлен! Мы скоро свяжемся с вами 📧");
 }else{
-alert("Ошибка отправки");
+let message = "Ошибка отправки";
+if(result && result.errors && result.errors.length){
+message = result.errors.map(err => err.message).join(", ");
+}
+showModal(message);
 }
 
 }catch(err){
-alert("Ошибка сервера");
+showModal("Ошибка сети или блокировка браузером");
+}
+finally{
+submitBtn.disabled = false;
+submitBtn.textContent = originalBtnText;
 }
 }
 
@@ -1318,63 +1337,8 @@ window.addEventListener("load", revealOnScroll);
 /*          SLIDER           */
 /* ========================= */
 
-const slider = document.querySelector(".slides");
-const images = document.querySelectorAll(".slides img");
-const prevBtn = document.querySelector(".prev");
-const nextBtn = document.querySelector(".next");
-const dotsContainer = document.querySelector(".dots");
-
-let index = 0;
-let interval;
-
-/* Создание точек */
-images.forEach((_,i)=>{
-let dot = document.createElement("span");
-dot.addEventListener("click",()=>goToSlide(i));
-dotsContainer.appendChild(dot);
-});
-
-const dots = document.querySelectorAll(".dots span");
-
-function updateSlider(){
-slider.style.transform = `translateX(-${index * 100}%)`;
-
-dots.forEach(dot=>dot.classList.remove("active"));
-dots[index].classList.add("active");
-}
-
-function nextSlide(){
-index = (index + 1) % images.length;
-updateSlider();
-}
-
-function prevSlide(){
-index = (index - 1 + images.length) % images.length;
-updateSlider();
-}
-
-function goToSlide(i){
-index = i;
-updateSlider();
-}
-
-nextBtn.addEventListener("click", nextSlide);
-prevBtn.addEventListener("click", prevSlide);
-
-/* Автопрокрутка */
-function startAuto(){
-interval = setInterval(nextSlide, 4000);
-}
-
-function stopAuto(){
-clearInterval(interval);
-}
-
-document.querySelector(".slider").addEventListener("mouseenter", stopAuto);
-document.querySelector(".slider").addEventListener("mouseleave", startAuto);
-
-startAuto();
-updateSlider();
+/* Основной слайдер на странице сейчас не используется.
+   Оставляем безопасную заглушку, чтобы сайт не падал, если блока нет. */
 
 /* ===== ПРОСТОЙ АВТО СЛАЙДЕР О НАС ===== */
 
@@ -1387,21 +1351,16 @@ function showAboutSlide(){
     aboutIndex = (aboutIndex + 1) % aboutSlides.length;
 }
 
-setInterval(showAboutSlide, 2000);
+if(aboutSlides.length){ setInterval(showAboutSlide, 2000); }
 
-/* Swipe поддержка */
-let startX = 0;
+/* Swipe поддержка для основного слайдера отключена, так как сам блок не используется */
 
-document.querySelector(".slider").addEventListener("touchstart", e=>{
-startX = e.touches[0].clientX;
-});
-
-document.querySelector(".slider").addEventListener("touchend", e=>{
-let endX = e.changedTouches[0].clientX;
-
-if(startX - endX > 50) nextSlide();
-if(endX - startX > 50) prevSlide();
-});
+function closeAdmin(){
+let panel = document.getElementById("adminPanel");
+if(panel){
+panel.style.transform = "translateX(-100%)";
+}
+}
 </script> 
 
 <div id="adminPanel" style="position:fixed;top:0;left:0;width:400px;height:100%;background:white;padding:20px;overflow:auto;transform:translateX(-100%);transition:0.3s;z-index:5000;">
